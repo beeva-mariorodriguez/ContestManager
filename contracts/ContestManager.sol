@@ -34,7 +34,7 @@ contract ContestManager is ERC20Interface {
     address admin;
     string public name;
     string public symbol;
-    address[] public contests;
+    mapping(address => bool) public contests;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
     uint public _totalSupply;
@@ -81,7 +81,7 @@ contract ContestManager is ERC20Interface {
     function newContest(uint registerFinalDate, uint contestDate, string description, uint totalTickets) onlyAdmin public returns (address contest) {
         require(registerFinalDate < contestDate);
         address c = new Contest(registerFinalDate, contestDate, description, totalTickets);
-        contests.push(c);
+        contests[c] = true;
         emit CreatedContest(c);
         return c;
     }
@@ -93,6 +93,18 @@ contract ContestManager is ERC20Interface {
     }
     function allowance(address tokenOwner, address spender) public constant returns (uint remaining){
         return allowed[tokenOwner][spender];
+    }
+    function spendTokens(address claimer, uint tokensToSpend) public returns (bool success) {
+        require(contests[msg.sender] == true);
+        // maybe require(tx.origin == claimer) ?
+        balances[claimer] = balances[claimer].sub(tokensToSpend);
+        return true;
+    }
+    function recoverTokens(address claimer, uint tokensToRecover) public returns (bool success) {
+        require(contests[msg.sender] == true);
+        // maybe require(tx.origin == claimer) ?
+        balances[claimer] = balances[claimer].add(tokensToRecover);
+        return true;
     }
 
     event CreatedContest(address contest);
@@ -111,8 +123,7 @@ contract Contest {
         description=_description;
         contestDate=_contestDate;
         totalTickets=_totalTickets;
-
-    } 
+    }
     // not working!
     function claimTicket(bytes32 code) public returns(bytes32) {
         require(claimedTickets[code] == false);
