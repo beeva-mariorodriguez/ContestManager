@@ -1,4 +1,7 @@
 pragma solidity ^0.4.18;
+
+import "./ContestManager.sol";
+
 contract Contest {
     uint registerFinalDate;
     uint contestDate;
@@ -6,10 +9,10 @@ contract Contest {
     string description;
     uint totalTickets;
     uint availableTickets;
-    unint tokensPerTicket;
+    uint tokensPerTicket;
     mapping(bytes32 => bool) public claimedTickets;
 
-    constructor( uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets, addr _contestManagerAddri, uint _tokensPerTicket) public {
+    constructor( uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets, address _contestManagerAddr, uint _tokensPerTicket) public {
         registerFinalDate=_registerFinalDate;
         description=_description;
         contestDate=_contestDate;

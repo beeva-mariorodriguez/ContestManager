@@ -1,5 +1,7 @@
 pragma solidity ^0.4.23;
 
+import "./Contest.sol";
+
 library SafeMath {
     function add(uint a, uint b) internal pure returns (uint c) {
         c = a + b;
