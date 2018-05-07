@@ -80,9 +80,9 @@ contract ContestManager is ERC20Interface {
         emit Transfer(from, to, tokens);
         return true;
     }
-    function newContest(uint registerFinalDate, uint contestDate, string description, uint totalTickets) onlyAdmin public returns (address contest) {
+    function newContest(uint registerFinalDate, uint contestDate, string description, uint totalTickets, uint tokensPerTicket) onlyAdmin public returns (address contest) {
         require(registerFinalDate < contestDate);
-        address c = new Contest(registerFinalDate, contestDate, description, totalTickets);
+        address c = new Contest(registerFinalDate, contestDate, description, totalTickets, address(this)  , tokensPerTicket);
         contests[c] = true;
         emit CreatedContest(c);
         return c;
