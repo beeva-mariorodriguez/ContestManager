@@ -1,5 +1,7 @@
 pragma solidity ^0.4.23;
 
+import "./Contest.sol";
+
 library SafeMath {
     function add(uint a, uint b) internal pure returns (uint c) {
         c = a + b;
@@ -78,9 +80,9 @@ contract ContestManager is ERC20Interface {
         emit Transfer(from, to, tokens);
         return true;
     }
-    function newContest(uint registerFinalDate, uint contestDate, string description, uint totalTickets) onlyAdmin public returns (address contest) {
+    function newContest(uint registerFinalDate, uint contestDate, string description, uint totalTickets, uint tokensPerTicket) onlyAdmin public returns (address contest) {
         require(registerFinalDate < contestDate);
-        address c = new Contest(registerFinalDate, contestDate, description, totalTickets);
+        address c = new Contest(registerFinalDate, contestDate, description, totalTickets, address(this)  , tokensPerTicket);
         contests[c] = true;
         emit CreatedContest(c);
         return c;
@@ -109,46 +111,3 @@ contract ContestManager is ERC20Interface {
 
     event CreatedContest(address contest);
 }
-
-contract Contest {
-    uint registerFinalDate;
-    uint contestDate;
-    string description;
-    uint totalTickets;
-    uint availableTickets;
-    mapping(bytes32 => bool) public claimedTickets;
-
-    constructor( uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets) public {
-        registerFinalDate=_registerFinalDate;
-        description=_description;
-        contestDate=_contestDate;
-        totalTickets=_totalTickets;
-    }
-    // not working!
-    function claimTicket(bytes32 code) public returns(bytes32) {
-        require(claimedTickets[code] == false);
-        require(availableTickets > 0);
-        availableTickets--;
-        if(availableTickets == 0){
-            emit NoMoreTickets();
-        }
-        claimedTickets[code] = true;
-        emit TicketClaimed(code);
-        return code;
-    }
-    function checkTicket(bytes32 code) public view returns (bool) {
-        return claimedTickets[code];
-    }
-    function freeTicket(bytes32 code) public returns (bytes32) {
-        require(claimedTickets[code] == true);
-        claimedTickets[code] = false;
-        emit TicketFreed(code);
-        availableTickets++;
-        claimedTickets[code] = false;
-        return code;
-    }
-    event TicketClaimed(bytes32 code);
-    event TicketFreed(bytes32 code);
-    event NoMoreTickets();
-}
-
