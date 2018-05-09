@@ -21,25 +21,13 @@ library SafeMath {
     }
 }
 
-contract ERC20Interface {
-    function totalSupply() public constant returns (uint);                                   
-    function balanceOf(address tokenOwner) public constant returns (uint balance);           
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining); 
-    function transfer(address to, uint tokens) public returns (bool success); 
-    function approve(address spender, uint tokens) public returns (bool success); 
-    function transferFrom(address from, address to, uint tokens) public returns (bool success); 
-    event Transfer(address indexed from, address indexed to, uint tokens);
-    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
-}
-
-contract ContestManager is ERC20Interface {
+contract ContestManager {
     address admin;
     string public name;
     string public symbol;
     mapping(address => bool) public contests;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-    uint public _totalSupply;
 
     using SafeMath for uint;
 
@@ -52,32 +40,10 @@ contract ContestManager is ERC20Interface {
         admin = msg.sender;
         name = "TicketToken";
         symbol = "TT";
-        _totalSupply = 100;
-        balances[admin] = _totalSupply;
-        emit Transfer(address(0), admin, _totalSupply);
     }
-    function addTokens(uint tokens) onlyAdmin public returns (bool success) {
-        _totalSupply = _totalSupply.add(tokens);
-        balances[admin] = balances[admin].add(tokens);
-        emit Transfer(address(0), admin, tokens);
-        return true;
-    }
-    function transfer(address to, uint tokens) public returns (bool success) {
-        balances[msg.sender] = balances[msg.sender].sub(tokens);
+    function addTokens(uint tokens,address to) onlyAdmin public returns (bool success) {
         balances[to] = balances[to].add(tokens);
-        emit Transfer(msg.sender, to, tokens);
-        return true;
-    }
-    function approve(address spender, uint tokens) public returns (bool success) {
-        allowed[msg.sender][spender] = tokens;
-        emit Approval(msg.sender, spender, tokens);
-        return true;
-    }
-    function transferFrom(address from, address to, uint tokens) public returns (bool success) {
-        balances[from] = balances[from].sub(tokens);
-        allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
-        balances[to] = balances[to].add(tokens);
-        emit Transfer(from, to, tokens);
+        emit Transfer(admin, to, tokens);
         return true;
     }
     function newContest(uint registerFinalDate, uint contestDate, string description, uint totalTickets, uint tokensPerTicket) onlyAdmin public returns (address contest) {
@@ -87,14 +53,8 @@ contract ContestManager is ERC20Interface {
         emit CreatedContest(c);
         return c;
     }
-    function totalSupply() public constant returns (uint){
-        return _totalSupply  - balances[admin];
-    } 
     function balanceOf(address tokenOwner) public constant returns (uint balance){
         return balances[tokenOwner];
-    }
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining){
-        return allowed[tokenOwner][spender];
     }
     function spendTokens(address claimer, uint tokensToSpend) public returns (bool success) {
         require(contests[msg.sender] == true);
@@ -109,5 +69,6 @@ contract ContestManager is ERC20Interface {
         return true;
     }
 
+    event Transfer(address indexed from, address indexed to, uint tokens);
     event CreatedContest(address contest);
 }
