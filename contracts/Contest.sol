@@ -2,7 +2,8 @@ pragma solidity ^0.4.18;
 
 import "./ContestManager.sol";
 
-contract Contest {
+contract Contest
+{
     uint public registerFinalDate;
     uint public contestDate;
     ContestManager public cm;
@@ -12,17 +13,21 @@ contract Contest {
     uint public tokensPerTicket;
     mapping(bytes32 => bool) public claimedTickets;
 
-    constructor( uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets, address _contestManagerAddr, uint _tokensPerTicket) public {
-        registerFinalDate=_registerFinalDate;
-        description=_description;
-        contestDate=_contestDate;
-        totalTickets=_totalTickets;
-        tokensPerTicket=_tokensPerTicket;
-        cm= ContestManager(_contestManagerAddr);
-
+    constructor
+        (uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets, address _contestManagerAddr, uint _tokensPerTicket) 
+        public 
+    {
+        registerFinalDate = _registerFinalDate;
+        description = _description;
+        contestDate = _contestDate;
+        totalTickets = _totalTickets;
+        tokensPerTicket = _tokensPerTicket;
+        cm = ContestManager(_contestManagerAddr);
     }
+
     // not working!
-    function claimTicket(bytes32 code) public returns(bytes32) {
+    function claimTicket(bytes32 code) public returns(bytes32)
+    {
         require(claimedTickets[code] == false);
         require(availableTickets > 0);
         cm.spendTokens(msg.sender,tokensPerTicket);
@@ -35,11 +40,13 @@ contract Contest {
         return code;
     }
 
-    function checkTicket(bytes32 code) public view returns (bool) {
+    function checkTicket(bytes32 code) public view returns (bool)
+    {
         return claimedTickets[code];
     }
 
-    function freeTicket(bytes32 code) public returns (bytes32) {
+    function freeTicket(bytes32 code) public returns (bytes32)
+    {
         require(claimedTickets[code] == true);
         cm.recoverTokens(msg.sender,tokensPerTicket);
         claimedTickets[code] = false;
@@ -48,6 +55,7 @@ contract Contest {
         claimedTickets[code] = false;
         return code;
     }
+    
     event TicketClaimed(bytes32 code);
     event TicketFreed(bytes32 code);
     event NoMoreTickets();
