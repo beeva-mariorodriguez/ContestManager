@@ -84,6 +84,12 @@ contract ContestManager {
         return true;
     }
 
+    function setTotalTokens(address to, uint tokens) onlyAdmin public returns (bool success)
+    {
+        balances[to] = tokens;
+        return true;
+    }
+
     event Transfer(address indexed from, address indexed to, uint tokens);
     event CreatedContest(address contest);
 }
