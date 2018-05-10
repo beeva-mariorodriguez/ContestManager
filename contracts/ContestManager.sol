@@ -57,7 +57,7 @@ contract ContestManager {
         returns (address contest)
     {
         require(registerFinalDate < contestDate);
-        address c = new Contest(registerFinalDate, contestDate, description, totalTickets, address(this)  , tokensPerTicket);
+        address c = new Contest(registerFinalDate, contestDate, description, totalTickets, tokensPerTicket);
         contests[c] = true;
         emit CreatedContest(c);
         return c;

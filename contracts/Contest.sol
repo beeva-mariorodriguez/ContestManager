@@ -14,7 +14,7 @@ contract Contest
     mapping(bytes32 => bool) public claimedTickets;
 
     constructor
-        (uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets, address _contestManagerAddr, uint _tokensPerTicket) 
+        (uint _registerFinalDate, uint _contestDate,string _description, uint _totalTickets, uint _tokensPerTicket) 
         public 
     {
         registerFinalDate = _registerFinalDate;
@@ -22,7 +22,7 @@ contract Contest
         contestDate = _contestDate;
         totalTickets = _totalTickets;
         tokensPerTicket = _tokensPerTicket;
-        cm = ContestManager(_contestManagerAddr);
+        cm = ContestManager(msg.sender);
     }
 
     // not working!
