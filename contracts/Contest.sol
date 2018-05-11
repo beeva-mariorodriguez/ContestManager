@@ -32,6 +32,8 @@ contract Contest
     {
         require(claimedTickets[msg.sender] == false);
         require(availableTickets >= 1);
+        // solium-disable-next-line security/no-block-members
+        require(block.timestamp <= registerFinalDate);
         cm.spendTokens(msg.sender, tokensPerTicket);
         availableTickets = availableTickets.sub(1);
         claimedTickets[msg.sender] = true;

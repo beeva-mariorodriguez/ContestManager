@@ -29,7 +29,9 @@ contract TestContestManager
 
     function testClaimTicket() public
     {
-        Contest contest = Contest(cm.newContest(1525937318, 1525937319, "testClaimTicket",100, 2));
+        // solium-disable-next-line security/no-block-members
+        uint contestdeadline = now + 86400; // contest is tomorrow!
+        Contest contest = Contest(cm.newContest(contestdeadline, contestdeadline + 1, "testClaimTicket",100, 2));
         Assert.equal(10, cm.balanceOf(address(this)), "testClaimTicket() failed, initial balance should be 10");
         Assert.equal(false, contest.claimedTickets(address(this)), "testClaimTicket() failed, ticket is already claimed");
         Assert.equal(contest.claimTicket(), true, "testClaimTicket() failed");
@@ -39,7 +41,9 @@ contract TestContestManager
 
     function testClaimLastTicket() public
     {
-        Contest contest = Contest(cm.newContest(1525937318, 1525937319, "testClaimLastTicket", 1, 2));
+        // solium-disable-next-line security/no-block-members
+        uint contestdeadline = now + 86400; // contest is tomorrow!
+        Contest contest = Contest(cm.newContest(contestdeadline, contestdeadline + 1, "testClaimLastTicket", 1, 2));
         Assert.equal(contest.claimTicket(), true, "testClaimLastTicket() failed");
         Assert.equal(6, cm.balanceOf(address(this)), "testClaimLastTicket() failed, final balance should be 6");
         Assert.equal(true, contest.claimedTickets(address(this)), "testClaimLastTicket() failed, ticket is unclaimed");
@@ -47,7 +51,9 @@ contract TestContestManager
 
     function testSpendLastToken() public
     {
-        Contest contest = Contest(cm.newContest(1525937318, 1525937319, "testClaimTicket",100, 2));
+        // solium-disable-next-line security/no-block-members
+        uint contestdeadline = now + 86400; // contest is tomorrow!
+        Contest contest = Contest(cm.newContest(contestdeadline, contestdeadline + 1, "testClaimTicket",100, 2));
         cm.setTotalTokens(address(this), 2);
         contest.claimTicket();
         Assert.equal(0, cm.balanceOf(address(this)), "testSpendLastToken() failed, final balance should be 0");
@@ -56,7 +62,9 @@ contract TestContestManager
 
     function testFreeTicket() public
     {
-        Contest contest = Contest(cm.newContest(1525937318, 1525937319, "testFreeTicket",100, 2));
+        // solium-disable-next-line security/no-block-members
+        uint contestdeadline = now + 86400; // contest is tomorrow!
+        Contest contest = Contest(cm.newContest(contestdeadline, contestdeadline + 1, "testFreeTicket",100, 2));
         cm.setTotalTokens(address(this), 2);
         contest.claimTicket();
         Assert.equal(true, contest.freeTicket(), "testFreeTicket() failed, freeTicket() failed");
