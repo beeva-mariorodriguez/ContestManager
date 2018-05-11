@@ -28,7 +28,7 @@ contract Contest
         cm = ContestManager(msg.sender);
     }
 
-    function claimTicket() public returns(bool success)
+    function claimTicket() public returns (bool success)
     {
         require(claimedTickets[msg.sender] == false);
         require(availableTickets >= 1);
@@ -39,6 +39,18 @@ contract Contest
         return true;
     }
 
+    function freeTicket() public returns (bool success)
+    {
+        require(claimedTickets[msg.sender]);
+        // user will always recover just 1 token, even if he spent more to claim the ticket
+        cm.recoverTokens(msg.sender, 1);
+        availableTickets = availableTickets.add(1);
+        claimedTickets[msg.sender] = false;
+        emit TicketFreed(msg.sender);
+        return true;
+    }
+
     event TicketClaimed(address claimer);
+    event TicketFreed(address claimer);
 }
 

@@ -53,4 +53,15 @@ contract TestContestManager
         Assert.equal(0, cm.balanceOf(address(this)), "testSpendLastToken() failed, final balance should be 0");
         Assert.equal(true, contest.claimedTickets(address(this)), "testSpendLastToken() failed, ticket is unclaimed");
     }
+
+    function testFreeTicket() public
+    {
+        Contest contest = Contest(cm.newContest(1525937318, 1525937319, "testFreeTicket",100, 2));
+        cm.setTotalTokens(address(this), 2);
+        contest.claimTicket();
+        Assert.equal(true, contest.freeTicket(), "testFreeTicket() failed, freeTicket() failed");
+        Assert.equal(1, cm.balanceOf(address(this)), "testFreeTicket() failed, balance should be 1");
+        Assert.equal(false, contest.claimedTickets(address(this)), "testFreeTicket() failed, ticket is claimed");
+        Assert.equal(100, contest.availableTickets(), "testFreeTicket() failed, availableTickets should be 100");
+    }
 }
