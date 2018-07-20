@@ -1,6 +1,8 @@
 const contestmanager = artifacts.require("ContestManager");
 const contest = artifacts.require("Contest");
 
+web3.eth.defaultAccount = '0x627306090abab3a6e1400e9345bc60c78a8bef57';
+
 contract('ContestManager JS test', async (accounts) => {
     it("deploy contract",async () =>{
         let cm = await contestmanager.deployed();
@@ -18,7 +20,6 @@ contract('ContestManager JS test', async (accounts) => {
 contract('Deploy new Contest', async (accounts) => {
     it("deploy contest", async () => {
         let cm = await contestmanager.deployed();
-
         let event = cm.CreatedContest((error, result) => {
             if (!error)
                 console.log(result);
@@ -33,11 +34,6 @@ contract('Deploy new Contest', async (accounts) => {
             Date.now() + 86401000,
             "testContest",
             100, 2);
-        event.stopWatching();
-        // c is the new contract's address
-        // console.log(c);
-        // assert.equal(true,
-        //     await cm.contests.call(c));
     });
 })
 
